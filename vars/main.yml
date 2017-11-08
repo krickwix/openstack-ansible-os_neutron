@@ -33,6 +33,9 @@ neutron_package_list: |-
   {% if neutron_services['neutron-linuxbridge-agent']['group'] in group_names and neutron_services['neutron-linuxbridge-agent'].service_en | bool %}
   {% set _ = packages.extend(neutron_lxb_distro_packages) %}
   {% endif %}
+  {% if neutron_services['neutron-vpp-agent']['group'] in group_names %}
+  {% set _ = packages.extend(neutron_vpp_distro_packages) *}
+  {% endif %}
   {% if neutron_services['neutron-lbaasv2-agent']['group'] in group_names and neutron_lbaasv2 | bool %}
   {% set _ = packages.extend(neutron_lbaas_distro_packages) %}
   {% endif %}
@@ -108,6 +111,7 @@ neutron_developer_constraints:
   - "git+{{ networking_calico_git_repo }}@{{ networking_calico_git_install_branch }}#egg=networking-calico"
   - "git+{{ dragonflow_git_repo }}@{{ dragonflow_git_install_branch }}#egg=dragonflow"
   - "git+{{ networking_odl_git_repo }}@{{ networking_odl_git_install_branch }}#egg=networking-odl"
+  - "git+{{ networking_vpp_git_repo }}@{{ networking_vpp_git_install_branch }}#egg=networking-vpp"
 
 neutron_bin: "/openstack/venvs/neutron-{{ neutron_venv_tag }}/bin"
 
