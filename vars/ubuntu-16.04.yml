@@ -42,6 +42,9 @@ neutron_developer_mode_distro_packages:
 neutron_lxb_distro_packages:
   - bridge-utils
 
+neutron_vpp_distro_packages:
+  - vpp
+  
 neutron_lbaas_distro_packages:
   - haproxy
 
