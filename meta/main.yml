@@ -50,6 +50,7 @@ dependencies:
               neutron_services['calico-dhcp-agent']['group'],
               neutron_services['calico-felix']['group'],
               neutron_services['dragonflow-controller-agent']['group'],
+              neutron_services['vpp-controller-agent']['group'],
               neutron_services['neutron-server']['group']
             ]) | length > 0
          }}"
