@@ -15,10 +15,16 @@
 
 - name: Install VPP repo
   apt_repository:
-    repo: https://nexus.fd.io/content/repositories/fd.io.stable.1710.ubuntu.xenial.main/ ./
+    repo: deb [trusted=yes] https://nexus.fd.io/content/repositories/fd.io.master.ubuntu.xenial.main/ ./
     state: present
-    filename: fdio
+    filename: 99-fdio
   tags:
     - vpp-install
 
-
+- name: Install VPP package
+  package:
+    name: "vpp vpp-lib"
+    state: latest
+    update_cache: "{{ (ansible_pkg_mgr in ['apt', 'zypper']) | ternary('yes', omit) }}"
+    cache_valid_time: 600
+                    
