@@ -23,8 +23,7 @@
 
 - name: Install VPP package
   package:
-    name: "vpp vpp-lib"
+    name: "vpp"
     state: latest
-    update_cache: "{{ (ansible_pkg_mgr in ['apt', 'zypper']) | ternary('yes', omit) }}"
+    update_cache: yes
     cache_valid_time: 600
-                    
