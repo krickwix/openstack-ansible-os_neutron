@@ -30,6 +30,6 @@
     update_cache: yes
     cache_valid_time: 600
   when:
-    - neutron_services['vpp-controller-agent']['group'] in group_names
+    - neutron_services['neutron-vpp-agent']['group'] in group_names
   tags:
     - vpp-install
