@@ -19,7 +19,7 @@
     state: present
     filename: 99-fdio
   when:
-    - neutron_services['vpp-controller-agent']['group'] in group_names
+    - neutron_services['neutron-vpp-agent']['group'] in group_names
   tags:
     - vpp-install
 
