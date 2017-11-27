@@ -34,6 +34,17 @@
   tags:
     - vpp-install
 
+- name: Install VPP python API package
+  package:
+    name: "vpp-api-python"
+    state: latest
+    update_cache: yes
+    cache_valid_time: 600
+  when:
+    - neutron_services['neutron-vpp-agent']['group'] in group_names
+  tags:
+    - vpp-install
+
 - name: Install networking-vpp pip packages
   pip:
     name: "{{ neutron_optional_vpp_pip_packages }}"
