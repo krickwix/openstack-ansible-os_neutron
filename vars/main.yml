@@ -99,6 +99,7 @@ neutron_optional_opendaylight_pip_packages:
 
 neutron_optional_vpp_pip_packages:
   - networking-vpp
+  - vpp_papi
 
 neutron_proprietary_nuage_pip_packages:
   - nuage-openstack-neutron
