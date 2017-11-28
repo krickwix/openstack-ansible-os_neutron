@@ -98,7 +98,6 @@ neutron_optional_opendaylight_pip_packages:
   - networking-odl
 
 neutron_optional_vpp_pip_packages:
-  - vpp-papi
   - networking-vpp
 
 neutron_proprietary_nuage_pip_packages:
@@ -121,7 +120,7 @@ neutron_bin: "/openstack/venvs/neutron-{{ neutron_venv_tag }}/bin"
 
 neutron_venv_download: "{{ not neutron_developer_mode | bool }}"
 
-neutron_lib_dir: "{{ neutron_bin | dirname }}/lib/python2.7/site-packages/"
+neutron_lib_dir: "{{ neutron_bin | dirname }}/lib/python2.7/site-packages/:/usr/lib/python2.7/dist-packages"
 
 ###
 ### Generic Neutron Config
