@@ -39,7 +39,10 @@ galaxy_info:
     - openstack
 dependencies:
   - pip_install
-  - apt_package_pinning
+  - role: apt_package_pinning
+    apt_pinned_packages: "{{ ovs_nsh_support | ternary(ovs_nsh_apt_pinned_packages, omit) }}"
+    when:
+      - ansible_pkg_mgr == 'apt'
   - galera_client
   - openstack_openrc
   - role: etcd
@@ -57,6 +60,7 @@ dependencies:
   - role: opendaylight
     install_method: "{{ opendaylight_install_method }}"
     extra_features: "{{ opendaylight_extra_features }}"
+    nb_rest_port: "{{ opendaylight_port | default('8180') }}"
     when:
      - neutron_plugin_type == "ml2.opendaylight"
      - "'opendaylight' in group_names"
