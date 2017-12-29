@@ -47,12 +47,13 @@ dependencies:
   - role: etcd
     etcd_install_type: proxy
     when:
-      - "neutron_plugin_type in ['ml2.calico', 'ml2.dragonflow']"
+      - "neutron_plugin_type in ['ml2.calico', 'ml2.dragonflow', 'ml2.vpp']"
       - "group_names | intersect([
            neutron_services['calico-dhcp-agent']['group'],
            neutron_services['calico-felix']['group'],
            neutron_services['dragonflow-controller-agent']['group'],
-           neutron_services['neutron-server']['group']
+           neutron_services['neutron-server']['group'],
+           neutron_services['neutron-vpp-agent']['group']
          ]) | length > 0"
   - role: opendaylight
     install_method: "{{ opendaylight_install_method }}"
