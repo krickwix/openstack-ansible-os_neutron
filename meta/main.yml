@@ -47,7 +47,7 @@ dependencies:
   - role: etcd
     etcd_install_type: proxy
     when:
-      - "neutron_plugin_type in ['ml2.calico', 'ml2.dragonflow']"
+      - "neutron_plugin_type in ['ml2.calico', 'ml2.dragonflow', 'ml2.vpp']"
       - "group_names | intersect([
            neutron_services['calico-dhcp-agent']['group'],
            neutron_services['calico-felix']['group'],
