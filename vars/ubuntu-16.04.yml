@@ -26,6 +26,9 @@ neutron_ovs_nsh_required_packages:
   - openvswitch-switch
   - python-openvswitch
 
+neutron_vpp_distro_packages:
+  - vpp
+  
 ## APT Cache options
 cache_timeout: 600
 

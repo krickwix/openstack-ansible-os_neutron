@@ -52,7 +52,8 @@ dependencies:
            neutron_services['calico-dhcp-agent']['group'],
            neutron_services['calico-felix']['group'],
            neutron_services['dragonflow-controller-agent']['group'],
-           neutron_services['neutron-server']['group']
+           neutron_services['neutron-server']['group'],
+           neutron_services['neutron-vpp-agent']['group']
          ]) | length > 0"
   - role: opendaylight
     install_method: "{{ opendaylight_install_method }}"
