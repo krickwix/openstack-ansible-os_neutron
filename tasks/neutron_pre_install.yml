@@ -100,18 +100,10 @@
 
 - name: Add fdio repo for ml2.vpp
   apt_repository:
-    repo: "{{ repo.repo }}"
-    state: "{{ repo.state | default('present') }}"
-    name: "{{ repo.name | default(omit) }}"
-    enabled: "{{ repo.enabled | default(omit) }}"
-    disable_gpg_check: "{{ repo.disable_gpg_check | default(omit) }}"
-    description: "{{ repo.description | default(omit) }}"
-    autorefresh: "{{ repo.autorefresh | default(omit) }}"
-    auto_import_keys: "{{ repo.auto_import_keys | default(omit) }}"
-    priority: "{{ repo.priority | default(omit) }}"
-  with_items: "{{ vpp_repos }}"
-  loop_control:
-    loop_var: repo
+    repo: deb [trusted=yes] https://nexus.fd.io/content/repositories/fd.io.master.ubuntu.xenial.main/ ./
+    state: present
+    filename: 99-fdio
   when:
+    - neutron_services['neutron-vpp-agent']['group'] in group_names
     - ansible_pkg_mgr == 'apt'
     - neutron_plugin_type == 'ml2.vpp'
