@@ -44,6 +44,15 @@ neutron_distro_packages:
   - keepalived
   - radvd
 
+vpp_repos:
+  - repo: https://nexus.fd.io/content/repositories/fd.io.master.ubuntu.xenial.main/
+    name: vpp
+    autorefresh: yes
+    auto_import_keys: yes
+
+neutron_vpp_distro_packages:
+  - vpp
+
 neutron_developer_mode_distro_packages:
   - git-core
 
