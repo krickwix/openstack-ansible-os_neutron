@@ -109,7 +109,7 @@
     autorefresh: "{{ repo.autorefresh | default(omit) }}"
     auto_import_keys: "{{ repo.auto_import_keys | default(omit) }}"
     priority: "{{ repo.priority | default(omit) }}"
-  with_items: "{{ neutron_vpp_repos }}"
+  with_items: "{{ vpp_repos }}"
   loop_control:
     loop_var: repo
   when:
