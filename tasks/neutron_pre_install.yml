@@ -114,4 +114,4 @@
     loop_var: repo
   when:
     - ansible_pkg_mgr == 'apt'
-    - neutron_plugin_type == 'vpp'
+    - neutron_plugin_type == 'ml2.vpp'
