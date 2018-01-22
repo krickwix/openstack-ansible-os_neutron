@@ -104,6 +104,8 @@
     state: present
     filename: 99-fdio
   when:
-    - neutron_services['neutron-vpp-agent']['group'] in group_names
-    - ansible_pkg_mgr == 'apt'
     - neutron_plugin_type == 'ml2.vpp'
+
+- debug:
+    msg: "debug_group_names: {{ group_names }}"
+

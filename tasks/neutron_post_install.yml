@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- debug:
+    msg: "debug_post-install - group_names: {{ group_names }} - neutron_filtered_service: {{ filtered_neutron_services }}"
+
+
 - name: Copy common neutron config
   config_template:
     src: "{{ item.src }}"
