@@ -1,2 +1,13 @@
 [ml2_vpp]
+#jwt_signing = False
+#etcd_ca_cert = /etc/ssl/etcd/ca.crt
+#gpe_locators = physnet1
+#gpe_src_cidr = 192.168.10.10/24
+enable_vpp_restart = False
+etcd_pass =
+etcd_user =
+etcd_port = 2379
+etcd_host = {% for host in groups['etcd_container'] %}{{ hostvars[host]['container_address'] }}{% if not loop.last %},{% endif %}{% endfor %}
 
+# TODO: still need to figure out how to get a list of etcd containers in case of ha cluster
+#physnets = physnet1:TenGigabitEthernetc/0/0,physnet2:TenGigabitEthernet7/0/0
