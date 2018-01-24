@@ -14,8 +14,11 @@
 # limitations under the License.
 
 - debug:
-    msg: "debug_post-install - group_names: {{ group_names }} - neutron_filtered_service: {{ filtered_neutron_services }}"
-
+    msg: "debug_post-install - group_names: {{ group_names }}"
+- debug:
+    msg: "debug_post-install - neutron_filtered_service: {{ filtered_neutron_services }}"
+- debug:
+    msg: "debug_post-install - etcd_containers {{ groups['etcd_container'] }}"
 
 - name: Copy common neutron config
   config_template:
