@@ -62,3 +62,32 @@
   tags:
     - vpp-install
     - vpp-pip-packages
+
+- debug:
+    msg: "{{ container_networks }}"
+
+- debug:
+    msg: "{{ group_names }}"
+
+- name: Drop vpp startup config script
+  template:
+    src: templates/vpp_startup-config.j2
+    dest: /etc/vpp/startup-config
+  when:
+    - neutron_services['neutron-vpp-agent']['group'] in group_names
+
+
+- name: Drop vpp startup configuration
+  template:
+    src: templates/vpp_startup.conf.j2
+    dest: /etc/vpp/startup.conf
+  when:
+    - neutron_services['neutron-vpp-agent']['group'] in group_names
+
+- name: vpp service is restarted
+  service:
+    name: vpp
+    state: restarted
+  when:
+    - neutron_services['neutron-vpp-agent']['group'] in group_names
+

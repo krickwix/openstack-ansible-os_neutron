@@ -1,0 +1,7 @@
+{% if container_networks['tunnel_address']['interface'] is defined %}
+{% set vpp_interface = container_networks['tunnel_address']['interface'] %}
+{% else %}
+{% set vpp_interface = container_networks['tunnel_address']['bridge'] %}
+{% endif %}
+create host-interface name {{ vpp_interface }}
+set interface state host-{{ vpp_interface }} up

@@ -1,0 +1,16 @@
+unix {
+  nodaemon
+  log /tmp/vpp.log
+  full-coredump
+  cli-listen /run/vpp/cli.sock
+  gid vpp
+  startup-config /etc/vpp/startup-config
+}
+
+api-trace {
+  on
+}
+
+api-segment {
+  gid vpp
+}

@@ -150,3 +150,4 @@
   when:
     - neutron_metadata_checksum_fix | bool
     - neutron_services['neutron-linuxbridge-agent']['group'] in group_names
+
