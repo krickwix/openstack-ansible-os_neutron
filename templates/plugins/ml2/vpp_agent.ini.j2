@@ -1,8 +1,9 @@
 [ml2_vpp]
-#jwt_signing = False
+jwt_signing = False
 #etcd_ca_cert = /etc/ssl/etcd/ca.crt
-#gpe_locators = physnet1
-#gpe_src_cidr = 192.168.10.10/24
+etcd_insecure_explicit_disable_https = True
+gpe_locators = physnet1
+gpe_src_cidr = 192.168.10.10/24
 enable_vpp_restart = False
 etcd_pass =
 etcd_user =
