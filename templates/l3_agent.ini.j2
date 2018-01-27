@@ -11,8 +11,11 @@ external_network_bridge = {{ neutron_external_network_bridge }}
 gateway_external_network_id = {{ neutron_gateway_external_network_id }}
 
 # Drivers
+{% if neutron_plugins[neutron_plugin_type].driver_interface == 'vpp' %}
+interface_driver = linuxbridge
+{% else %}
 interface_driver = {{ neutron_plugins[neutron_plugin_type].driver_interface }}
-
+{% endif %}
 agent_mode = {{ neutron_plugins[neutron_plugin_type].l3_agent_mode }}
 
 # Conventional failover

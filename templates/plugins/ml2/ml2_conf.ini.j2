@@ -43,3 +43,18 @@ firewall_driver = iptables_hybrid
 {% endif %}
 enable_security_group = True
 enable_ipset = True
+
+{% if neutron_plugins[neutron_plugin_type].driver_interface == 'vpp' %}
+[ml2_vpp]
+jwt_signing = False
+#etcd_ca_cert = /etc/ssl/etcd/ca.crt
+etcd_insecure_explicit_disable_https = True
+gpe_locators = physnet1
+gpe_src_cidr = 192.168.10.10/24
+enable_vpp_restart = False
+etcd_pass =
+etcd_user =
+etcd_port = 2379
+# TODO: still need to figure out how to get a list of etcd containers in case of ha cluster
+etcd_host = {% for host in groups['etcd_container'] %}{{ hostvars[host]['container_address'] }}{% if not loop.last %},{% endif %}{% endfor %}
+{% endif %}

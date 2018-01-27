@@ -11,9 +11,8 @@ etcd_port = 2379
 # TODO: still need to figure out how to get a list of etcd containers in case of ha cluster
 etcd_host = {% for host in groups['etcd_container'] %}{{ hostvars[host]['container_address'] }}{% if not loop.last %},{% endif %}{% endfor %}
 
-{% if container_networks['tunnel_address']['interface'] is defined %}
-{% set vpp_interface = container_networks['tunnel_address']['interface'] %}
-{% else %}
-{% set vpp_interface = container_networks['tunnel_address']['bridge'] %}
+
+{% if neutron_provider_networks.network_mappings is defined %}
+{% set vpp_interface = neutron_provider_networks.network_mappings.split(':')[1] %}
 {% endif %}
 physnets = physnet1:host-{{ vpp_interface }}

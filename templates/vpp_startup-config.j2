@@ -1,7 +1,6 @@
-{% if container_networks['tunnel_address']['interface'] is defined %}
-{% set vpp_interface = container_networks['tunnel_address']['interface'] %}
-{% else %}
-{% set vpp_interface = container_networks['tunnel_address']['bridge'] %}
-{% endif %}
+{% if neutron_provider_networks.network_mappings is defined %}
+{% set vpp_interface = neutron_provider_networks.network_mappings.split(':')[1] %}
 create host-interface name {{ vpp_interface }}
 set interface state host-{{ vpp_interface }} up
+{% endif %}
+

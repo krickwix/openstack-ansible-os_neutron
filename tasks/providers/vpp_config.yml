@@ -77,10 +77,13 @@
     - vpp-pip-packages
 
 - debug:
-    msg: "{{ container_networks }}"
+    msg: "vpp_provider_config: containers_networks = {{ container_networks }}"
 
 - debug:
-    msg: "{{ group_names }}"
+    msg: "vpp_provider_config: group_name = {{ group_names }}"
+
+- debug:
+    msg: "vpp_provider_config: network_mappings = {{ neutron_provider_networks.network_mappings }}"
 
 - name: Drop vpp startup config script
   template:
