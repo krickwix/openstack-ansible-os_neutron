@@ -15,4 +15,4 @@ etcd_host = {% for host in groups['etcd_container'] %}{{ hostvars[host]['contain
 {% if neutron_provider_networks.network_mappings is defined %}
 {% set vpp_interface = neutron_provider_networks.network_mappings.split(':')[1] %}
 {% endif %}
-physnets = physnet1:host-{{ vpp_interface }}
+physnets = physnet1:host-{{ vpp_interface_vlan[0] }}
