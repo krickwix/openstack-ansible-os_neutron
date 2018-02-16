@@ -56,7 +56,27 @@
   tags:
     - vpp-install
 
+- name: Install dmidecode package
+  package:
+    name: "dmidecode"
+    state: latest
+    update_cache: yes
+    cache_valid_time: 600
+  when:
+    - neutron_services['neutron-vpp-agent']['group'] in group_names
+  tags:
+    - vpp-install
 
+- name: Install bridge-utils package
+  package:
+    name: "bridge-utils"
+    state: latest
+    update_cache: yes
+    cache_valid_time: 600
+  when:
+    - neutron_services['neutron-vpp-agent']['group'] in group_names
+  tags:
+    - vpp-install
 
 - name: Install networking-vpp pip packages
   pip:
