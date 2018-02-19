@@ -104,24 +104,19 @@
 
 - name: set vpp interface vlan
   set_fact:
-    vpp_interface_vlan: "{{ provider_networks | selectattr('network.type','equalto','vlan') | map(attribute='network.container_bridge') | list }}"
+    vpp_interface_vlan: "{{ provider_networks | selectattr('network.type','equalto','flat') | map(attribute='network.container_interface') | list }}"
   when:
     - "'all_containers' not in group_names"
-- name: set vpp interface vxlan
-  set_fact:
-    vpp_interface_vxlan: "{{ provider_networks | selectattr('network.type','equalto','vxlan') | map(attribute='network.container_bridge') | list }}"
-  when:
-    - "'all_containers' not in group_names"
-- name: set vpp interface vlan
-  set_fact:
-    vpp_interface_vlan: "{{ provider_networks | selectattr('network.type','equalto','vlan') | map(attribute='network.container_interface') | list }}"
-  when:
-    - "'all_containers' in group_names"
 - name: set vpp interface vxlan
   set_fact:
     vpp_interface_vxlan: "{{ provider_networks | selectattr('network.type','equalto','vxlan') | map(attribute='network.container_interface') | list }}"
   when:
-    - "'all_containers' in group_names"
+    - "'all_containers' not in group_names"
+- name: set vpp interface flat
+  set_fact:
+    vpp_interface_flat: "{{ provider_networks | selectattr('network.type','equalto','vlan') | map(attribute='network.container_interface') | list }}"
+  when:
+    - "'all_containers' not in group_names"
 
 - name: Drop vpp startup config script
   template:

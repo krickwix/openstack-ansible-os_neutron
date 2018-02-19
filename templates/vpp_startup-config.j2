@@ -8,3 +8,7 @@ create host-interface name {{ vpp_interface_vxlan[0] }}
 set interface state host-{{ vpp_interface_vxlan[0] }} up
 {% endif %}
 
+{% if vpp_interface_flat is defined %}
+create host-interface name {{ vpp_interface_flat[0] }}
+set interface state host-{{ vpp_interface_flat[0] }} up
+{% endif %}
