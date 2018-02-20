@@ -139,3 +139,16 @@
   when:
     - neutron_services['neutron-vpp-agent']['group'] in group_names
 
+- name: libvirtd service is restarted
+  service:
+    name: libvirtd
+    state: restarted
+  when:
+    - "'compute_hosts' in group_names"
+
+- name: nova-compute service is restarted
+  service:
+    name: nova-compute
+    state: restarted
+  when:
+    - "'compute_hosts' in group_names"
