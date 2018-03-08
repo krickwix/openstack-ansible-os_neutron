@@ -114,9 +114,13 @@
     - neutron_get_venv | changed
 
 - name: Update virtualenv path
-  command: >
-    virtualenv-tools --update-path=auto --reinitialize {{ neutron_bin | dirname }}
+  shell: |
+    find {{ neutron_bin }} -name \*.pyc -delete
+    sed -si '1s/^.*python.*$/#!{{ neutron_bin | replace ('/','\/') }}\/python/' {{ neutron_bin }}/*
+    virtualenv {{ neutron_bin | dirname }}
   when: neutron_get_venv | changed
+  tags:
+    - skip_ansible_lint
 
 - name: Install optional pip packages
   pip:
@@ -169,3 +173,16 @@
     section: neutron
     option: venv_tag
     value: "{{ neutron_venv_tag }}"
+
+- include: neutron_selinux.yml
+  when:
+    - ansible_pkg_mgr in ['dnf', 'yum']
+    - ansible_selinux.status is defined
+    - ansible_selinux.status == "enabled"
+
+- name: Ensure Open vSwitch service is started and enabled
+  service:
+    name: "{{ neutron_ovs_service_name }}"
+    state: started
+    enabled: yes
+  when: neutron_needs_openvswitch | bool

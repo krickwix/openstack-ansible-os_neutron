@@ -8,7 +8,11 @@
 {% endfor %}
 
 {% if (neutron_lbaasv2|bool) and ('neutron_lbaas.services.loadbalancer.plugin.LoadBalancerPluginv2' not in neutron_plugin_base) %}
-  {% set _ = neutron_plugin_loaded_base.append("lbaasv2") %}
+  {% if neutron_octavia_proxy_plugin|bool %}
+    {% set _ = neutron_plugin_loaded_base.append("lbaasv2-proxy") %}
+  {% else %}
+    {% set _ = neutron_plugin_loaded_base.append("lbaasv2") %}
+  {% endif %}
 {%- endif -%}
 
 # General, applies to all host groups
@@ -17,7 +21,7 @@
 use_stderr = False
 debug = {{ debug }}
 fatal_deprecations = {{ neutron_fatal_deprecations }}
-log_file = /var/log/neutron/neutron.log
+log_file = {{ neutron_log_dir }}/neutron.log
 
 ## Rpc all
 executor_thread_pool_size = {{ neutron_rpc_thread_pool_size }}
@@ -99,10 +103,40 @@ dhcp_agents_per_network = {{ dhcp_agents_max }}
 dhcp_lease_duration = 86400
 {% endif %}
 
+# Driver for external DNS integration. (string value)
+{% if neutron_designate_enabled %}
+external_dns_driver = designate
+{% else %}
+#external_dns_driver = <None>
+{% endif %}
+
 # Nova notifications
 notify_nova_on_port_status_changes = True
 notify_nova_on_port_data_changes = True
 send_events_interval = 2
+
+# End of [DEFAULT] section
+{% if neutron_designate_enabled %}
+
+[designate]
+
+# required by current dns integration implementation
+url = {{ designate_service_adminurl }}
+
+auth_type = {{ designate_keystone_auth_plugin }}
+auth_uri = {{ keystone_service_adminuri }}
+auth_url = {{ keystone_service_adminurl }}
+region_name = {{ designate_service_region }}
+project_domain_id = {{ designate_service_project_domain_id }}
+user_domain_id = {{ designate_service_user_domain_id }}
+project_name = {{ designate_service_project_name }}
+username = {{ designate_service_user_name }}
+password = {{ designate_service_password }}
+
+allow_reverse_dns_lookup = {{ neutron_allow_reverse_dns_lookup }}
+ipv4_ptr_zone_prefix_size = {{ neutron_ipv4_ptr_zone_prefix_size }}
+ipv6_ptr_zone_prefix_size = {{ neutron_ipv6_ptr_zone_prefix_size }}
+{% endif %}
 
 [nova]
 auth_type = {{ nova_keystone_auth_plugin }}
@@ -157,7 +191,8 @@ memcache_secret_key = {{ memcached_encryption_key }}
 
 # Database
 [database]
-connection = mysql+pymysql://{{ neutron_galera_user }}:{{ neutron_container_mysql_password }}@{{ neutron_galera_address }}/{{ neutron_galera_database }}?charset=utf8
+connection = mysql+pymysql://{{ neutron_galera_user }}:{{ neutron_container_mysql_password }}@{{ neutron_galera_address }}/{{ neutron_galera_database }}?charset=utf8{% if neutron_galera_use_ssl | bool %}&ssl_ca={{ neutron_galera_ssl_ca_cert }}{% endif %}
+
 max_overflow = {{ neutron_db_max_overflow }}
 max_pool_size = {{ neutron_db_pool_size }}
 pool_timeout = {{ neutron_db_pool_timeout }}
@@ -236,3 +271,12 @@ transport_url = rabbit://{% for host in neutron_rabbitmq_telemetry_servers.split
 # Concurrency (locking mechanisms)
 [oslo_concurrency]
 lock_path = {{ neutron_lock_path }}
+
+{% if neutron_services['neutron-server']['group'] in group_names and 'networking_sfc.services.sfc.plugin.SfcPlugin' in neutron_plugin_base %}
+# ODL-SFC
+[sfc]
+drivers = odl
+
+[flowclassifier]
+drivers = odl
+{% endif %}
