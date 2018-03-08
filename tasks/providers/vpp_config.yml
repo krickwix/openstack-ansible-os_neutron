@@ -15,7 +15,7 @@
 
 - name: Install VPP repo
   apt_repository:
-    repo: deb [trusted=yes] https://nexus.fd.io/content/repositories/fd.io.master.ubuntu.xenial.main/ ./
+    repo: deb [trusted=yes] https://nexus.fd.io/content/repositories/fd.io.ubuntu.xenial.main/ ./
     state: present
     filename: 99-fdio
   when:
@@ -56,7 +56,27 @@
   tags:
     - vpp-install
 
+- name: Install dmidecode package
+  package:
+    name: "dmidecode"
+    state: latest
+    update_cache: yes
+    cache_valid_time: 600
+  when:
+    - neutron_services['neutron-vpp-agent']['group'] in group_names
+  tags:
+    - vpp-install
 
+- name: Install bridge-utils package
+  package:
+    name: "bridge-utils"
+    state: latest
+    update_cache: yes
+    cache_valid_time: 600
+  when:
+    - neutron_services['neutron-vpp-agent']['group'] in group_names
+  tags:
+    - vpp-install
 
 - name: Install networking-vpp pip packages
   pip:
@@ -82,8 +102,22 @@
 - debug:
     msg: "vpp_provider_config: group_name = {{ group_names }}"
 
+- name: set vpp interface vlan
+  set_fact:
+    vpp_interface_vlan: "{{ provider_networks | selectattr('network.type','equalto','flat') | map(attribute='network.container_interface') | list }}"
+- name: set vpp interface vxlan
+  set_fact:
+    vpp_interface_vxlan: "{{ provider_networks | selectattr('network.type','equalto','vxlan') | map(attribute='network.container_interface') | list }}"
+- name: set vpp interface flat
+  set_fact:
+    vpp_interface_flat: "{{ provider_networks | selectattr('network.type','equalto','vlan') | map(attribute='network.container_interface') | list }}"
+
 - debug:
-    msg: "vpp_provider_config: network_mappings = {{ neutron_provider_networks.network_mappings }}"
+    msg: "vpp_provider_config: vpp_interface_vlan = {{ vpp_interface_vlan }}"
+- debug:
+    msg: "vpp_provider_config: vpp_interface_vxlan = {{ vpp_interface_vxlan }}"
+- debug:
+    msg: "vpp_provider_config: vpp_interface_flat = {{ vpp_interface_flat }}"
 
 - name: Drop vpp startup config script
   template:
@@ -91,7 +125,6 @@
     dest: /etc/vpp/startup-config
   when:
     - neutron_services['neutron-vpp-agent']['group'] in group_names
-
 
 - name: Drop vpp startup configuration
   template:
@@ -107,3 +140,16 @@
   when:
     - neutron_services['neutron-vpp-agent']['group'] in group_names
 
+- name: libvirtd service is restarted
+  service:
+    name: libvirtd
+    state: restarted
+  when:
+    - "'compute_hosts' in group_names"
+
+- name: nova-compute service is restarted
+  service:
+    name: nova-compute
+    state: restarted
+  when:
+    - "'compute_hosts' in group_names"
