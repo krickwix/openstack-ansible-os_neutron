@@ -7,7 +7,11 @@ debug = {{ debug }}
 num_sync_threads = {{ neutron_num_sync_threads | default(neutron_api_threads) }}
 
 # Drivers
+{% if neutron_plugins[neutron_plugin_type].driver_interface == 'vpp' %}
+interface_driver = linuxbridge
+{% else %}
 interface_driver = {{ neutron_plugins[neutron_plugin_type].driver_interface }}
+{% endif %}
 dhcp_driver = {{ neutron_driver_dhcp }}
 
 # Dnsmasq options
