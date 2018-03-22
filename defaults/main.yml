@@ -53,7 +53,7 @@ dragonflow_git_install_branch: master
 networking_odl_git_repo: https://git.openstack.org/openstack/networking-odl
 networking_odl_git_install_branch: master
 networking_vpp_git_repo: https://github.com/openstack/networking-vpp.git
-networking_vpp_git_install_branch: master
+networking_vpp_git_install_branch: tags/18.01
 
 # Developer mode
 neutron_developer_mode: false
