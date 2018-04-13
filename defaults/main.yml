@@ -31,27 +31,33 @@ neutron_package_state: "latest"
 ### Python code details
 ###
 
+neutron_log_dir: "/var/log/neutron"
+
 # Set the package install state for pip_package
 # Options are 'present' and 'latest'
 neutron_pip_package_state: "latest"
 
 # Source git repo/branch settings
 neutron_git_repo: https://git.openstack.org/openstack/neutron
-neutron_git_install_branch: master
+neutron_git_install_branch: "stable/queens"
 neutron_fwaas_git_repo: https://git.openstack.org/openstack/neutron-fwaas
-neutron_fwaas_git_install_branch: master
+neutron_fwaas_git_install_branch: "stable/queens"
 neutron_lbaas_git_repo: https://git.openstack.org/openstack/neutron-lbaas
-neutron_lbaas_git_install_branch: master
+neutron_lbaas_git_install_branch: "stable/queens"
 neutron_vpnaas_git_repo: https://git.openstack.org/openstack/neutron-vpnaas
-neutron_vpnaas_git_install_branch: master
+neutron_vpnaas_git_install_branch: "stable/queens"
 neutron_dynamic_routing_git_repo: https://git.openstack.org/openstack/neutron-dynamic-routing
-neutron_dynamic_routing_git_install_branch: master
+neutron_dynamic_routing_git_install_branch: "stable/queens"
 networking_calico_git_repo: https://git.openstack.org/openstack/networking-calico
-networking_calico_git_install_branch: master
+networking_calico_git_install_branch: master # no "stable/queens" branch
 dragonflow_git_repo: https://git.openstack.org/openstack/dragonflow
-dragonflow_git_install_branch: master
+dragonflow_git_install_branch: master # no "stable/queens" branch
 networking_odl_git_repo: https://git.openstack.org/openstack/networking-odl
-networking_odl_git_install_branch: master
+networking_odl_git_install_branch: "stable/queens"
+networking_sfc_git_repo: https://git.openstack.org/openstack/networking-sfc
+networking_sfc_git_install_branch: "stable/queens"
+networking_bgpvpn_git_repo: https://git.openstack.org/openstack/networking-bgpvpn
+networking_bgpvpn_git_install_branch: "stable/queens"
 networking_vpp_git_repo: https://github.com/openstack/networking-vpp.git
 networking_vpp_git_install_branch: master
 
@@ -84,6 +90,8 @@ neutron_agent_down_time: 120
 neutron_agent_polling_interval: 5
 neutron_report_interval: "{{ neutron_agent_down_time | int / 2 | int }}"
 
+# TODO(evrardjp): Remove this when vpnaas/Dragonflow don't use it anymore.
+# This was deprecated in Pike cycle.
 neutron_external_network_bridge: ""
 
 neutron_dns_domain: "openstacklocal."
@@ -98,7 +106,10 @@ neutron_dns_domain: "openstacklocal."
 # Dnsmasq doesn't work with config_template override, a deployer
 # should instead configure its own neutron_dhcp_config key/values
 neutron_dhcp_config:
-  log-facility: "/var/log/neutron/neutron-dnsmasq.log"
+  log-facility: "{{ neutron_log_dir }}/neutron-dnsmasq.log"
+
+# Set the neutron lbaasv2 user group, defaults from os specific vars
+neutron_lbaasv2_user_group: "{{ _neutron_lbaasv2_user_group }}"
 
 ###
 ### Tunable Overrides (Sorted alphabetically)
@@ -161,15 +172,15 @@ neutron_default_quota: -1
 neutron_quota_floatingip: 50
 neutron_quota_health_monitor: -1
 neutron_quota_member: -1
-neutron_quota_network: 10
+neutron_quota_network: 100
 neutron_quota_network_gateway: 5
 neutron_quota_packet_filter: 100
 neutron_quota_pool: 10
-neutron_quota_port: 50
+neutron_quota_port: 500
 neutron_quota_router: 10
 neutron_quota_security_group: 10
 neutron_quota_security_group_rule: 100
-neutron_quota_subnet: 10
+neutron_quota_subnet: 100
 neutron_quota_vip: 10
 
 ###
@@ -181,6 +192,8 @@ neutron_galera_database: neutron
 neutron_db_max_overflow: 20
 neutron_db_pool_size: 120
 neutron_db_pool_timeout: 30
+neutron_galera_use_ssl: "{{ galera_use_ssl | default(False) }}"
+neutron_galera_ssl_ca_cert: "{{ galera_ssl_ca_cert | default('/etc/ssl/certs/galera-ca.pem') }}"
 
 ###
 ### RPC (RabbitMQ) integration
@@ -243,6 +256,9 @@ neutron_rabbitmq_telemetry_use_ssl: "{{ neutron_rabbitmq_use_ssl }}"
 ###
 
 neutron_designate_enabled: False
+neutron_allow_reverse_dns_lookup: True
+neutron_ipv4_ptr_zone_prefix_size: 24
+neutron_ipv6_ptr_zone_prefix_size: 116
 
 # Notifications topic for designate
 neutron_notifications_designate: notifications_designate
@@ -309,8 +325,6 @@ neutron_local_ip: 127.0.0.1
 ### L3 Agent Plugin Configuration
 ###
 
-neutron_gateway_external_network_id: ""
-
 # Set this option to "true" to enable legacy neutron L3HA tool support
 # TODO(cloudnull): Remove this in the Ocata cycle
 neutron_legacy_ha_tool_enabled: false
@@ -359,6 +373,9 @@ nova_metadata_insecure: False
 # See documentation section titled "Configuring the Network Load Balancing
 # Service (Optional)" for more details.
 neutron_octavia_request_poll_timeout: 100
+
+# Use the Octavia proxy
+neutron_octavia_proxy_plugin: False
 
 ###
 ### VPNaaS Configuration

@@ -13,23 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: Ensure Open vSwitch service is started and enabled
-  service:
-    name: "{{ neutron_ovs_service_name }}"
-    state: started
-    enabled: yes
-
 - name: Retrieve current OvS manager
   command: ovs-vsctl get-manager
   register: ovs_manager
   changed_when: False
+  until: ovs_manager.rc == 0
+  retries: 3
+  delay: 5
 
 - name: Set ODL as OvS manager
   command: ovs-vsctl set-manager {{ ovs_manager_list }}
   when: ovs_manager.stdout == ""
 
 - name: Configure hosts for networking-odl, force kernel datapath
-  command: "{{ neutron_bin }}/neutron-odl-ovs-hostconfig --noovs_dpdk {% if 'odl-router_v2' in neutron_plugin_base or 'odl-router' in neutron_plugin_base %}--datapath_type=system --bridge_mappings={{ neutron_provider_networks.network_mappings }} {% endif %}"
+  command: "{{ neutron_bin }}/neutron-odl-ovs-hostconfig --noovs_dpdk {% if neutron_provider_networks.network_mappings is defined and 'odl-router_v2' in neutron_plugin_base or 'odl-router' in neutron_plugin_base %}--datapath_type=system --bridge_mappings={{ neutron_provider_networks.network_mappings }} {% endif %}"
   when: ovs_manager.stdout == ""
 
 - name: Retrieve current OvS local ip

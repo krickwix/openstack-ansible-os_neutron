@@ -32,7 +32,7 @@ set -e
 export WORKING_DIR=${WORKING_DIR:-$(pwd)}
 export ROLE_NAME=${ROLE_NAME:-''}
 
-export ANSIBLE_PARAMETERS=${ANSIBLE_PARAMETERS:-"-vvv"}
+export ANSIBLE_PARAMETERS=${ANSIBLE_PARAMETERS:-"-vv"}
 export ANSIBLE_OVERRIDES=${ANSIBLE_OVERRIDES:-$WORKING_DIR/tests/os_neutron-overrides.yml}
 export TEST_PLAYBOOK=${TEST_PLAYBOOK:-$WORKING_DIR/tests/test-upgrade.yml}
 export TEST_CHECK_MODE=${TEST_CHECK_MODE:-false}
@@ -51,7 +51,8 @@ echo "TEST_IDEMPOTENCE: ${TEST_IDEMPOTENCE}"
 function execute_ansible_playbook {
 
   export ANSIBLE_CLI_PARAMETERS="${ANSIBLE_PARAMETERS} -e @${ANSIBLE_OVERRIDES}"
-  CMD_TO_EXECUTE="ansible-playbook ${TEST_PLAYBOOK} $@ ${ANSIBLE_CLI_PARAMETERS}"
+  export ANSIBLE_BIN=${ANSIBLE_BIN:-"ansible-playbook"}
+  CMD_TO_EXECUTE="${ANSIBLE_BIN}  ${TEST_PLAYBOOK} $@ ${ANSIBLE_CLI_PARAMETERS}"
 
   echo "Executing: ${CMD_TO_EXECUTE}"
   echo "With:"
@@ -62,24 +63,32 @@ function execute_ansible_playbook {
 
 }
 
-function gate_job_exit_tasks {
-  source "${COMMON_TESTS_PATH}/test-log-collect.sh"
-}
-
 ## Main ----------------------------------------------------------------------
 
 # Ensure that the Ansible environment is properly prepared
 source "${COMMON_TESTS_PATH}/test-ansible-env-prep.sh"
 
-# Set gate job exit traps, this is run regardless of exit state when the job finishes.
-trap gate_job_exit_tasks EXIT
-
-# Prepare environment for the initial deploy of stable/newton Neutron
+# Prepare environment for the initial deploy of (previous and current) Neutron
 # No upgrading or testing is done yet.
 export ANSIBLE_LOG_PATH="${ANSIBLE_LOG_DIR}/ansible-execute-newton-neutron-install.log"
 
-# Execute the setup of Stable/Newton Neutron
+# Execute the setup of current infrastructure
 execute_ansible_playbook
+
+# Prepare environment for the deploy of previous Nova:
+# No upgrading or testing is done yet.
+export TEST_PLAYBOOK="${WORKING_DIR}/tests/test-install-previous-neutron.yml"
+export ANSIBLE_LOG_PATH="${ANSIBLE_LOG_DIR}/ansible-execute-previous_neutron-install.log"
+export PREVIOUS_VENV="ansible-previous"
+export ANSIBLE_BIN="${WORKING_DIR}/.tox/${PREVIOUS_VENV}/bin/ansible-playbook"
+source ${COMMON_TESTS_PATH}/test-create-previous-venv.sh
+
+# Execute the setup of previous Neutron
+execute_ansible_playbook
+
+# Unset previous branch overrides
+unset PREVIOUS_VENV
+unset ANSIBLE_BIN
 
 # Prepare environment for the upgrade of Neutron
 export TEST_PLAYBOOK="${WORKING_DIR}/tests/benchmark-upgrade.yml"

@@ -47,3 +47,24 @@
     voting: false
     vars:
       tox_env: ovs-nsh
+
+- job:
+    name: openstack-ansible-neutron-ssl-nv
+    parent: openstack-ansible-functional-ubuntu-xenial
+    voting: false
+    vars:
+      tox_env: ssl
+
+- job:
+    name: openstack-ansible-odl-sfc-ubuntu-xenial
+    parent: openstack-ansible-functional-ubuntu-xenial
+    voting: false
+    vars:
+      tox_env: odl-sfc
+
+- job:
+    name: openstack-ansible-opendaylight-bgpvpn-ubuntu-xenial
+    parent: openstack-ansible-functional-ubuntu-xenial
+    voting: false
+    vars:
+      tox_env: opendaylight-bgpvpn

@@ -29,6 +29,18 @@ neutron_opendaylight_conf_ini_overrides:
     username: admin
     password: admin
 
+neutron_plugin_base:
+  - odl-router_v2
+  - bgpvpn
+
+neutron_ml2_drivers_type: "flat,vlan,vxlan"
+
+neutron_provider_networks:
+  network_flat_networks: "*"
+  network_types: "vlan"
+  network_vlan_ranges: "physnet1:102:199"
+  network_mappings: "physnet1:br-provider"
+
 tempest_run: yes
 
 tempest_plugins:
@@ -38,6 +50,11 @@ tempest_plugins:
   - name: neutron-plugins
     repo: https://git.openstack.org/openstack/neutron-tempest-plugin
     branch: 028c312ab0e32901c282c73fd402b8de874163fc
+  - name: networking-bgpvpn
+    repo: https://git.openstack.org/openstack/networking-bgpvpn
+    branch: stable/queens
 
 tempest_test_whitelist:
   - "neutron_tempest_plugin.api.test_networks*"
+  - "networking_bgpvpn_tempest.tests.api.test_bgpvpn"
+  - "networking_bgpvpn_tempest.tests.scenario.test_bgpvpn_basic"
